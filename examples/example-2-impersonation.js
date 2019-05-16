@@ -66,3 +66,50 @@ const manageBudgetsAsUserEvent = {
   type: "MANAGE_BUDGETS_AS_USER",
   impersonatedUserId: 2
 };
+
+const parallelImpersonationMachine = Machine({
+  id: "parallelImpersonationMachine",
+  initial: "notImpersonating",
+  states: {
+    notImpersonating: {
+      on: {
+        IMPERSONATE: "impersonating"
+      }
+    },
+    impersonating: {
+      type: "parallel",
+      states: {
+        viewAs: {
+          initial: "active",
+          states: {
+            active: {
+              on: {
+                TOGGLE: "inactive"
+              }
+            },
+            inactive: {
+              on: {
+                TOGGLE: "active"
+              }
+            }
+          }
+        },
+        manageBudgets: {
+          initial: "inactive",
+          states: {
+            active: {
+              on: {
+                TOGGLE: "inactive"
+              }
+            },
+            inactive: {
+              on: {
+                TOGGLE: "active"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+});
